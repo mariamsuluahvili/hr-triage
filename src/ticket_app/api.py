@@ -41,6 +41,7 @@ def create_app(provider=None, policy=None, db_path=None):
                 os.getenv("LLM_MODEL", ""),
                 float(os.getenv("LLM_TIMEOUT", "60")),
                 key,
+                max_tokens=int(os.getenv("LLM_MAX_TOKENS", "300")),
             )
         else:
             raise ValueError("LLM_PROVIDER must be mock or local")
