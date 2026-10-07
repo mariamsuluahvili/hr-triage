@@ -1,0 +1,4 @@
+group_number = 3
+image_name   = "hr-triage:local"
+scenario_id  = "g03"
+llm_provider = "mock"

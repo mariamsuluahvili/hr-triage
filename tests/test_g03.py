@@ -71,3 +71,33 @@ def test_valid_local_output_saved(tmp_path):
     r = c.post("/api/analyze", json={"subject": "Holiday", "text": "I want to book a holiday."})
     assert r.status_code == 200 and r.json()["requires_review"] is True
     assert len(c.get("/api/history").json()) == 1
+
+def test_request_has_token_limit_and_finite_timeout(tmp_path, monkeypatch):
+    seen = {}
+
+    def handler(req):
+        seen["body"] = json.loads(req.content)
+        return httpx.Response(200, json={"choices": [{"message": {"content": GOOD}}]})
+
+    provider = LocalAnalysisProvider("http://llm/v1", "m", 5, "", httpx.MockTransport(handler), 123)
+    r = client(tmp_path, provider).post(
+        "/api/analyze", json={"subject": "Holiday", "text": "I want to book a holiday."}
+    )
+    assert r.status_code == 200
+    assert seen["body"]["max_tokens"] == 123
+    assert provider.timeout == 5
+
+
+def test_max_tokens_read_from_environment(tmp_path, monkeypatch):
+    captured = {}
+
+    class Spy(LocalAnalysisProvider):
+        def __init__(self, *args, **kwargs):
+            captured.update(kwargs)
+            super().__init__(*args, **kwargs)
+
+    monkeypatch.setenv("LLM_PROVIDER", "local")
+    monkeypatch.setenv("LLM_MAX_TOKENS", "77")
+    monkeypatch.setattr("ticket_app.api.LocalAnalysisProvider", Spy)
+    create_app(policy=POLICY, db_path=str(tmp_path / "t.db"))
+    assert captured["max_tokens"] == 77
