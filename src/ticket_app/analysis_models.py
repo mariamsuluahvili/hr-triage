@@ -36,4 +36,4 @@ class Record(BaseModel):
     scenario: str
     provider: str
     analysis: Analysis
-    requires_review: bool = True
+    requires_review: Literal[True] = True

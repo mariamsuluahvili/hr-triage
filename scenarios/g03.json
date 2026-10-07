@@ -1,0 +1,12 @@
+{
+  "id": "g03",
+  "title": "HR service request triage",
+  "categories": ["leave", "payroll", "onboarding"],
+  "keywords": {
+    "leave": ["leave", "holiday", "vacation"],
+    "payroll": ["payroll", "salary", "payslip"],
+    "onboarding": ["onboarding", "starter", "checklist"]
+  },
+  "high_priority_words": ["urgent", "asap", "immediately"],
+  "instructions": "Route HR requests. leave: holiday and leave status, propose the leave administrator. payroll: payslip and salary documents, propose the payroll team. onboarding: new starter checklist, propose the onboarding coordinator."
+}
